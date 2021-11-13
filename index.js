@@ -39,9 +39,12 @@ async function run() {
     try {
         await client.connect();
         const database = client.db('eco_goods');
-        const roomsCollection = database.collection('rooms');
-        const roombookings = database.collection('roombookings')
         const usersCollection = database.collection('users');
+        const productsCollection = database.collection('products');
+
+
+        const roombookings = database.collection('roombookings')
+
 
         app.get('/users/:email', async (req, res) => {
             const email = req.params.email;
@@ -88,27 +91,25 @@ async function run() {
 
         })
 
-        // GET API FOR ROOMS
-        app.get('/rooms', async (req, res) => {
-            const cursor = roomsCollection.find({});
+        app.get('/products', async (req, res) => {
+            const cursor = productsCollection.find({});
             const rooms = await cursor.toArray();
             res.send(rooms);
         });
 
-        // POST API FOR ROOMS
-        app.post('/rooms', async (req, res) => {
+        app.post('/products', async (req, res) => {
             const room = req.body;
-            const result = await roomsCollection.insertOne(room);
+            const result = await productsCollection.insertOne(room);
             res.send(result);
         });
 
-        // DELETE API FOR ROOMS
-        app.delete('/rooms/:id', async (req, res) => {
+        app.delete('/products/:id', async (req, res) => {
             const id = req.params.id;
             const query = { _id: ObjectId(id) };
-            const result = await roomsCollection.deleteOne(query);
+            const result = await productsCollection.deleteOne(query);
             res.send(result);
         })
+
 
         // GET API FOR ROOMBOOK
         app.get('/roombookings', async (req, res) => {
