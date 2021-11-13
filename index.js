@@ -41,9 +41,9 @@ async function run() {
         const database = client.db('eco_goods');
         const usersCollection = database.collection('users');
         const productsCollection = database.collection('products');
+        const ordersCollection = database.collection('orders')
 
-
-        const roombookings = database.collection('roombookings')
+        const reviewsCollection = database.collection('reviews')
 
 
         app.get('/users/:email', async (req, res) => {
@@ -93,13 +93,13 @@ async function run() {
 
         app.get('/products', async (req, res) => {
             const cursor = productsCollection.find({});
-            const rooms = await cursor.toArray();
-            res.send(rooms);
+            const products = await cursor.toArray();
+            res.send(products);
         });
 
         app.post('/products', async (req, res) => {
-            const room = req.body;
-            const result = await productsCollection.insertOne(room);
+            const product = req.body;
+            const result = await productsCollection.insertOne(product);
             res.send(result);
         });
 
@@ -110,48 +110,55 @@ async function run() {
             res.send(result);
         })
 
-
-        // GET API FOR ROOMBOOK
-        app.get('/roombookings', async (req, res) => {
-            const cursor = roombookings.find({});
-            const roombooks = await cursor.toArray();
-            res.send(roombooks);
+        app.get('/orders', async (req, res) => {
+            const cursor = ordersCollection.find({});
+            const orders = await cursor.toArray();
+            res.send(orders);
         });
 
         // GET API FOR ROOMBOOK TO GET DATA BY USER EMAIL
-        app.get('/roombookings/:email', async (req, res) => {
+        app.get('/orders/:email', async (req, res) => {
             const email = req.params.email;
             console.log(email)
             const query = { clientEmail: email };
-            const roombooks = await roombookings.find(query).toArray();
-            res.send(roombooks);
+            const orders = await ordersCollection.find(query).toArray();
+            res.send(orders);
         });
 
-        // POST API FOR ROOMBOOK
-        app.post('/roombookings', async (req, res) => {
-            const roombook = req.body;
-            const result = await roombookings.insertOne(roombook);
+        app.post('/orders', async (req, res) => {
+            const order = req.body;
+            const result = await ordersCollection.insertOne(order);
             res.send(result);
         });
 
-        // DELETE API FOR ROOMBOOK
-        app.delete('/roombookings/:id', async (req, res) => {
+        app.delete('/orders/:id', async (req, res) => {
             const id = req.params.id;
             const query = { _id: ObjectId(id) };
-            const result = await roombookings.deleteOne(query);
+            const result = await ordersCollection.deleteOne(query);
             res.send(result);
         })
 
-        // UPDATE API FOR ROOMBOOK
-        app.put('/roombookings/:id', async (req, res) => {
+        app.put('/orders/:id', async (req, res) => {
             const id = req.params.id;
             const filter = { _id: ObjectId(id) };
-            const roombook = await roombookings.findOne(filter);
-            const newStatus = roombook.status == "true" ? "false" : "true";
+            const order = await ordersCollection.findOne(filter);
+            const newStatus = order.status == "true" ? "false" : "true";
             const updateStatus = { $set: { status: newStatus } };
-            const result = await roombookings.updateOne(filter, updateStatus)
+            const result = await ordersCollection.updateOne(filter, updateStatus)
             res.send(result);
         })
+
+        app.get('/reviews', async (req, res) => {
+            const cursor = reviewsCollection.find({});
+            const reviews = await cursor.toArray();
+            res.send(reviews);
+        });
+
+        app.post('/reviews', async (req, res) => {
+            const review = req.body;
+            const result = await reviewsCollection.insertOne(review);
+            res.send(result);
+        });
 
     } finally {
 
